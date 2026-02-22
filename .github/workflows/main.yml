@@ -1,0 +1,33 @@
+name: Run Instagram Bot
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Runs daily at 6 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run bot
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          SOURCE_IG_USER_ID: ${{ secrets.SOURCE_IG_USER_ID }}
+          TARGET_IG_USER_ID: ${{ secrets.TARGET_IG_USER_ID }}
+        run: python bot.py
